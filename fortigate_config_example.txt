@@ -1,0 +1,38 @@
+# FortiGate Firewall Policy Configuration for TCP MSS Adjustment
+
+config firewall policy
+    edit <policy_id>
+        set name "MPLS Overlay Traffic"
+        set srcintf "portX"
+        set dstintf "sdwan"
+        set srcaddr "all"
+        set dstaddr "all"
+        set tcp-mss-sender 1350
+        set tcp-mss-receiver 1350
+        set action accept
+        set service "ALL"
+    next
+end
+
+# SD-WAN Rule Configuration for MPLS Traffic
+config system sdwan
+    config service
+        edit <rule_id>
+            set name "MPLS-Traffic"
+            set src "0.0.0.0/0"
+            set dst "172.19.6.0/24"
+            set priority 1
+            set interface "MPLS"
+        next
+    end
+end
+
+# Policy-Based Routing Example for MPLS
+config router policy
+    edit 1
+        set input-device "portX"
+        set src "172.19.6.0/24"
+        set dst "172.19.6.205/32"
+        set gateway "next-hop-IP"
+    next
+end
